@@ -1,0 +1,51 @@
+import numpy as np 
+import matplotlib.pyplot as plt 
+from sklearn.tree import DecisionTreeClassifier, plot_tree 
+
+# Step 1: Define the dataset 
+# Features: Age, Income, Student (Categorical)
+# Age: 0=Young, 1=Middle-aged, 2=Senior
+# Income: 0=Low, 1=Medium, 2=High
+# Student: 0=No, 1=Yes
+X = np.array([ 
+    [2, 2, 1],  # Senior, High income, Student 
+    [0, 0, 0],  # Young, Low income, Not a student 
+    [1, 1, 1],  # Middle-aged, Medium income, Student 
+    [2, 0, 0],  # Senior, Low income, Not a student 
+    [1, 2, 1],  # Middle-aged, High income, Student 
+    [0, 1, 0],  # Young, Medium income, Not a student 
+    [1, 0, 1],  # Middle-aged, Low income, Student 
+    [2, 2, 0]   # Senior, High income, Not a student 
+]) 
+
+# Labels: 1 = Will Buy, 0 = Will Not Buy 
+y = np.array([1, 0, 0, 1, 1, 0, 1, 1]) 
+
+# Step 2: Train a Decision Tree Classifier 
+clf = DecisionTreeClassifier(criterion='entropy', max_depth=3) 
+clf.fit(X, y)
+
+# Step 3: Visualize the Decision Tree 
+plt.figure(figsize=(12, 8)) 
+plot_tree(
+    clf,
+    filled=True,
+    rounded=True,
+    feature_names=["Age", "Income", "Student"],
+    class_names=["Not Buy", "Buy"],
+    fontsize=12,
+    proportion=True
+) 
+plt.title("Decision Tree for Buying Prediction", fontsize=14, fontweight="bold") 
+plt.show() 
+
+# Step 4: Predict a new customer's buying decision 
+new_customer = np.array([[1, 0, 1]])  # Middle-aged, Low income, Student 
+predicted_class = clf.predict(new_customer)[0]
+
+# Step 5: Print the prediction result 
+print("\nPrediction for New Customer:")
+print(" Age: Middle-aged (1)")
+print(" Income: Low (0)")
+print(" Student: Yes (1)")
+print(f" Will they buy? {'YES' if predicted_class == 1 else 'NO'}")
