@@ -1,0 +1,65 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    confusion_matrix,
+    accuracy_score,
+    precision_score,
+    recall_score,
+    mean_squared_error,
+    classification_report,
+)
+from sklearn.model_selection import train_test_split
+
+# Step 1: Create univariate dataset (score vs admission)
+X = np.array([30, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]).reshape(-1, 1)
+y = np.array([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1])  # 0: Not Admitted, 1: Admitted
+
+# Step 2: Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+# Step 3: Train model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 4: Predictions
+y_pred = model.predict(X_test)
+
+# Step 5: Evaluation Metrics
+conf = confusion_matrix(y_test, y_pred)
+acc = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred)
+rec = recall_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+
+print("Confusion Matrix:\n", conf)
+print(f"Accuracy: {acc:.4f}")
+print(f"Precision: {prec:.4f}")
+print(f"Recall: {rec:.4f}")
+print(f"MSE: {mse:.4f}")
+print(f"RMSE: {rmse:.4f}")
+
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# Step 6: Predict for new data
+new_scores = np.array([[58], [72], [85]])
+new_predictions = model.predict(new_scores)
+
+print("\nNew Predictions:")
+for score, pred in zip(new_scores.flatten(), new_predictions):
+    status = "Admitted" if pred == 1 else "Not Admitted"
+    print(f"Score: {score} => {status}")
+
+# Step 7: Visualize the logistic curve
+X_range = np.linspace(30, 100, 300).reshape(-1, 1)
+y_prob = model.predict_proba(X_range)[:, 1]
+
+plt.scatter(X, y, color='blue', label='Actual Data')
+plt.plot(X_range, y_prob, color='red', label='Logistic Curve')
+plt.xlabel("Exam Score")
+plt.ylabel("Probability of Admission")
+plt.title("Logistic Regression (Univariate)")
+plt.legend()
+plt.grid(True)
+plt.show()
